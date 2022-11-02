@@ -4,13 +4,16 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] arguments)  {
-        Converter converter = new Converter();
+    public static void main(String[] arguments) {
         Scanner scn = new Scanner(System.in);
         System.out.print("Введите выражение: ");
         String exp = scn.nextLine();
         String newExp = exp.replaceAll(" ", ""); // убираем пробелы
+        System.out.println(calc(newExp));
+    }
+    public static String calc(String input){
 
+        Converter converter = new Converter();
         char[] chars = new char[10]; //создаем пустой массив длиной 10 символов(!)
 
         //Определяем арифметическое действие:
@@ -20,14 +23,14 @@ public class Main {
         int count =0;
 
         //проверяем, чтобы выражение было адеватной длины
-        if(newExp.length() > 10) {
+        if(input.length() > 10) {
             System.out.println("слишком длинное выражение");
             // return;
         }
 
-        for (int i = 0; i < newExp.length(); i++) {  // проверяем кол-во операторов
-
-            chars[i] = newExp.charAt(i);
+        for (int i = 0; i < input.length(); i++) {  // проверяем кол-во операторов
+            
+            chars[i] = input.charAt(i);
             if (chars[i] == '+' || chars[i] == '-' || chars[i] == '*' || chars[i] == '/') {
                 count += 1;
             }
@@ -37,7 +40,7 @@ public class Main {
             }
         }
         for (int i = 0; i < actions.length; i++) {
-            if(newExp.contains(actions[i])){
+            if(input.contains(actions[i])){
                 actionIndex = i;
                 break; // didn't find any valid actions in created array of actions = break the process
             }
@@ -47,8 +50,8 @@ public class Main {
             System.out.println("Некорректное выражение, можно использовать только + - / *");
             //return;
         }
-
-        String[] data = newExp.split(regexActions[actionIndex]); //разбиваем строку по символу-разделителю
+        
+        String[] data = input.split(regexActions[actionIndex]); //разбиваем строку по символу-разделителю
 
         if(converter.isRoman(data[0]) == converter.isRoman(data[1])){   // check whether numbers are in same format
             int a = 11, b=11;
@@ -69,10 +72,9 @@ public class Main {
             } else //if (Integer.parseInt(data[0])>10 || Integer.parseInt(data[1])>10)// Иначе выводим ошибку о том, что значения не соответсвуют нужному формату
             {
 
-                System.out.println("Значения должны быть в диапазоне 1..10 и I..X; ");
-                //return;
-            }
+                return "Значения должны быть в диапазоне 1..10 и I..X; ";
 
+            }
 
             int result = switch (actions[actionIndex]) {
                 case "+" -> a + b;
@@ -84,20 +86,17 @@ public class Main {
             if(isRoman){
                 if (result>0) {
                     System.out.println(converter.intToRoman(result));} else {
-                    System.out.println("результат не может быть <1 и >10 при использовании римских чисел"); // проверкa > 0
+                    return "результат не может быть <1 при использовании римских чисел"; // проверкa > 0
                 }
 
             } else {
-                System.out.println("Ответ: "+result);
                 //если числа были арабские, возвращаем результат в арабском числе
-                //System.out.println(result);
+                System.out.println(result);
             }
-
-        }else{
-            System.out.println("Числа должны быть ОДИНАКОГО! формате");
+        }else {
+            return "Числа должны быть ОДИНАКОГО! формате";
         }
-
-
+        return "";
     }
 
 }
@@ -141,7 +140,7 @@ class Converter {
             arabianKey = arabianKeyMap.floorKey(number);
             roman += arabianKeyMap.get(arabianKey);
             number -= arabianKey;
-        } while (number != 0 ); }  ;
+        } while (number != 0 ); }
         return roman;
     }
 
