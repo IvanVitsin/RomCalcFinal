@@ -11,7 +11,8 @@ public class Main {
         String newExp = exp.replaceAll(" ", ""); // убираем пробелы
         System.out.println(calc(newExp));
     }
-    public static String calc(String input){
+
+    public static String calc(String input) {
 
         Converter converter = new Converter();
         char[] chars = new char[10]; //создаем пустой массив длиной 10 символов(!)
@@ -20,60 +21,55 @@ public class Main {
         String[] actions = {"+", "-", "/", "*"};
         String[] regexActions = {"\\+", "-", "/", "\\*"};
         int actionIndex = -1;
-        int count =0;
+        int count = 0;
 
-        //проверяем, чтобы выражение было адеватной длины
-        if(input.length() > 10) {
-            System.out.println("слишком длинное выражение");
-            // return;
+        //проверяем, чтобы выражение было адекватной длины
+        if (input.length() > 10) {
+            return "слишком длинное выражение";
         }
 
         for (int i = 0; i < input.length(); i++) {  // проверяем кол-во операторов
-            
+
             chars[i] = input.charAt(i);
             if (chars[i] == '+' || chars[i] == '-' || chars[i] == '*' || chars[i] == '/') {
                 count += 1;
             }
             if (count >= 2) {
-                System.out.println("Слишком много операторов, выбери только одну операцию");
-                // return;
+                return "Слишком много операторов, выбери только одну операцию";
             }
         }
         for (int i = 0; i < actions.length; i++) {
-            if(input.contains(actions[i])){
+            if (input.contains(actions[i])) {
                 actionIndex = i;
-                break; // didn't find any valid actions in created array of actions = break the process
+                break;
             }
         }
 
-        if(actionIndex == -1){
-            System.out.println("Некорректное выражение, можно использовать только + - / *");
-            //return;
-        }
-        
+        if (actionIndex == -1) {
+            return "Некорректное выражение, можно использовать только + - / *";
+
+        };
+
         String[] data = input.split(regexActions[actionIndex]); //разбиваем строку по символу-разделителю
 
-        if(converter.isRoman(data[0]) == converter.isRoman(data[1])){   // check whether numbers are in same format
-            int a = 11, b=11;
+        if (converter.isRoman(data[0]) == converter.isRoman(data[1])) {   // проверяем на одинаковость форматов
+            int a = 11, b = 11;
             boolean isRoman = converter.isRoman(data[0]);
 
 
             // проверяем, если оба значения в римском формате:
-            if(isRoman && data[0].matches("(?i)I|II|III|IV|V|VI|VII|VIII|IX|X") &&
-                    data[1].matches("(?i)I|II|III|IV|V|VI|VII|VIII|IX|X")){
+            if (isRoman && data[0].matches("(?i)I|II|III|IV|V|VI|VII|VIII|IX|X") &&
+                    data[1].matches("(?i)I|II|III|IV|V|VI|VII|VIII|IX|X")) {
 
                 b = converter.romanToInt(data[1]);
                 a = converter.romanToInt(data[0]);
 
             } //проверяем, если оба значения в арабском формате от 1 до 10
-            else if (data[0].matches("(?i)1|2|3|4|5|6|7|8|9|10")  && data[1].matches("(?i)1|2|3|4|5|6|7|8|9|10")) {
+            else if (data[0].matches("(?i)1|2|3|4|5|6|7|8|9|10") && data[1].matches("(?i)1|2|3|4|5|6|7|8|9|10")) {
                 a = Integer.parseInt(data[0]);
                 b = Integer.parseInt(data[1]);
-            } else //if (Integer.parseInt(data[0])>10 || Integer.parseInt(data[1])>10)// Иначе выводим ошибку о том, что значения не соответсвуют нужному формату
-            {
-
+            } else {
                 return "Значения должны быть в диапазоне 1..10 и I..X; ";
-
             }
 
             int result = switch (actions[actionIndex]) {
@@ -83,9 +79,10 @@ public class Main {
                 default -> a / b;
             };
 
-            if(isRoman){
-                if (result>0) {
-                    System.out.println(converter.intToRoman(result));} else {
+            if (isRoman) {
+                if (result > 0) {
+                    System.out.println(converter.intToRoman(result));
+                } else {
                     return "результат не может быть <1 при использовании римских чисел"; // проверкa > 0
                 }
 
@@ -93,7 +90,7 @@ public class Main {
                 //если числа были арабские, возвращаем результат в арабском числе
                 System.out.println(result);
             }
-        }else {
+        } else {
             return "Числа должны быть ОДИНАКОГО! формате";
         }
         return "";
@@ -126,25 +123,29 @@ class Converter {
 
     }
 
-    boolean isRoman(String number){
+    boolean isRoman(String number) {
 
-        if (romanKeyMap.containsKey(number.charAt(0)))  {
+        if (romanKeyMap.containsKey(number.charAt(0))) {
             return romanKeyMap.containsKey((number.charAt(0)));
-        } else {return false;}
+        } else {
+            return false;
+        }
     }
 
     String intToRoman(int number) {
         String roman = "";
         int arabianKey;
-        if (number >0) {do {
-            arabianKey = arabianKeyMap.floorKey(number);
-            roman += arabianKeyMap.get(arabianKey);
-            number -= arabianKey;
-        } while (number != 0 ); }
+        if (number > 0) {
+            do {
+                arabianKey = arabianKeyMap.floorKey(number);
+                roman += arabianKeyMap.get(arabianKey);
+                number -= arabianKey;
+            } while (number != 0);
+        }
         return roman;
     }
 
-    int romanToInt(String num){
+    int romanToInt(String num) {
 
         int l = num.length() - 1;
         char[] arr = num.toCharArray();
@@ -153,9 +154,11 @@ class Converter {
         for (int i = l - 1; i >= 0; i--) {
             arab = romanKeyMap.get(arr[i]);
 
-            if (arab < romanKeyMap.get(arr[i+1])) {
+            if (arab < romanKeyMap.get(arr[i + 1])) {
                 result -= arab;
-            } else {result +=arab;}
+            } else {
+                result += arab;
+            }
 
         }
         return result;
